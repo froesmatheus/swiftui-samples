@@ -8,16 +8,52 @@
 
 import SwiftUI
 
+struct Landmark: Identifiable {
+    var id: Int
+    let name: String
+}
+
 struct ContentView : View {
+    let landmarks: [Landmark] = [
+        Landmark(id: 1, name: "Yosemite"),
+        Landmark(id: 2, name: "Sierra"),
+        Landmark(id: 3, name: "Mojave"),
+        Landmark(id: 4,name: "Catalina")
+    ]
+    
     var body: some View {
-        Text("Hello World")
+        NavigationView {
+            List(landmarks.identified(by: \.id)) { landmark in
+                LandmarkRow(landmark: landmark)
+            }
+            .navigationBarItem(title: Text("Edit"), titleDisplayMode: .inline, hidesBackButton: false)
+            .navigationBarTitle(Text("Landmarks"), displayMode: .large)
+        }
+        .preferredColorScheme(.dark)
+
     }
 }
 
-#if DEBUG
-struct ContentView_Previews : PreviewProvider {
-    static var previews: some View {
-        ContentView()
+struct LandmarkDetail: View {
+    let landmark: Landmark
+    
+    var body: some View {
+        VStack {
+            Text(landmark.name)
+        }
+        .navigationBarTitle(Text(landmark.name), displayMode: .inline)
     }
 }
-#endif
+
+struct LandmarkRow: View {
+    let landmark: Landmark
+    
+    var body: some View {
+        HStack {
+            PresentationButton(Text(landmark.name), destination: LandmarkDetail(landmark: landmark))
+            Text(landmark.name)
+            Spacer()
+            Text(String(landmark.id))
+        }
+    }
+}
